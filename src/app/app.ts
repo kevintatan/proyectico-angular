@@ -41,14 +41,15 @@ export class App {
   // Información para la sección Nosotros
   nosotrosInfo = {
     titulo: 'Sobre Nosotros',
-    descripcion: 'Somos un equipo dedicado a crear herramientas simples y efectivas para gestionar tus tareas diarias.'
+    descripcion: 'SOMOS LO MAS CHIMBA DE LO CHIMBA.'
   };
   
   // Información para la sección Contacto
   contactoInfo = {
     titulo: 'Contacto',
     email: 'contacto@milistatareas.com',
-    telefono: '+34 123 456 789'
+    telefono: '+57 312 456 7890'
+
   };
 
   
