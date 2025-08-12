@@ -1,0 +1,225 @@
+<!-- Contenedor principal con Tailwind CSS -->
+<div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
+  <!-- Menú de navegación -->
+  <nav class="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-4 mb-4">
+    <div class="flex justify-between items-center">
+      <div class="text-xl font-bold text-blue-600">Mi App</div>
+      <div class="flex space-x-4">
+        <button 
+          (click)="setSection('tareas')" 
+          [class.text-blue-600]="currentSection === 'tareas'"
+          [class.font-medium]="currentSection === 'tareas'"
+          class="hover:text-blue-500 transition-colors"
+        >
+          Tareas
+        </button>
+        <button 
+          (click)="setSection('nosotros')" 
+          [class.text-blue-600]="currentSection === 'nosotros'"
+          [class.font-medium]="currentSection === 'nosotros'"
+          class="hover:text-blue-500 transition-colors"
+        >
+          Nosotros
+        </button>
+        <button 
+          (click)="setSection('contacto')" 
+          [class.text-blue-600]="currentSection === 'contacto'"
+          [class.font-medium]="currentSection === 'contacto'"
+          class="hover:text-blue-500 transition-colors"
+        >
+          Contacto
+        </button>
+      </div>
+    </div>
+  </nav>
+  
+  <!-- Contenido principal -->
+  <div class="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-6">
+    
+    <!-- Sección de Tareas -->
+    <div *ngIf="currentSection === 'tareas'">
+      <!-- Título de la aplicación -->
+      <h1 class="text-3xl font-bold text-gray-800 text-center mb-6">
+        📝 {{ title }}
+      </h1>
+
+      <!-- Formulario para agregar nueva tarea -->
+    <div class="mb-6">
+      <div class="flex gap-2">
+        <!-- Input para escribir nueva tarea -->
+        <input
+          type="text"
+          [(ngModel)]="newTodoText"
+          (keypress)="onKeyPress($event)"
+          placeholder="¿Qué necesitas hacer?"
+          class="flex-1 px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
+        >
+        
+        <!-- Botón para agregar tarea -->
+        <button
+          (click)="addTodo()"
+          class="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all font-medium"
+        >
+          ➕
+        </button>
+      </div>
+    </div>
+
+    <!-- Filtros para mostrar diferentes tipos de tareas -->
+    <div class="mb-4">
+      <div class="flex gap-1 bg-gray-100 rounded-lg p-1">
+        <button
+          (click)="setFilter('all')"
+          [class.bg-white]="currentFilter === 'all'"
+          [class.shadow-sm]="currentFilter === 'all'"
+          class="flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all"
+        >
+          Todas
+        </button>
+        <button
+          (click)="setFilter('active')"
+          [class.bg-white]="currentFilter === 'active'"
+          [class.shadow-sm]="currentFilter === 'active'"
+          class="flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all"
+        >
+          Pendientes
+        </button>
+        <button
+          (click)="setFilter('completed')"
+          [class.bg-white]="currentFilter === 'completed'"
+          [class.shadow-sm]="currentFilter === 'completed'"
+          class="flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all"
+        >
+          Completadas
+        </button>
+      </div>
+    </div>
+
+    <!-- Lista de tareas -->
+    <div class="space-y-2 mb-4">
+      <!-- Mensaje cuando no hay tareas -->
+      <div *ngIf="getFilteredTodos().length === 0" class="text-center py-8 text-gray-500">
+        <div class="text-4xl mb-2">🎯</div>
+        <p>No hay tareas para mostrar</p>
+      </div>
+
+      <!-- Cada tarea individual -->
+      <div
+        *ngFor="let todo of getFilteredTodos()"
+        class="flex items-center gap-3 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <!-- Checkbox para marcar como completada -->
+        <input
+          type="checkbox"
+          [checked]="todo.completed"
+          (change)="toggleTodo(todo.id)"
+          class="w-5 h-5 text-blue-500 rounded focus:ring-blue-500"
+        >
+        
+        <!-- Texto de la tarea -->
+        <span
+          [class.line-through]="todo.completed"
+          [class.text-gray-500]="todo.completed"
+          [class.text-gray-800]="!todo.completed"
+          class="flex-1 transition-all"
+        >
+          {{ todo.text }}
+        </span>
+        
+        <!-- Botón para eliminar tarea -->
+        <button
+          (click)="deleteTodo(todo.id)"
+          class="text-red-500 hover:text-red-700 hover:bg-red-50 p-1 rounded transition-all"
+          title="Eliminar tarea"
+        >
+          🗑️
+        </button>
+      </div>
+    </div>
+
+    <!-- Información y acciones adicionales -->
+    <div class="flex items-center justify-between text-sm text-gray-600">
+      <!-- Contador de tareas pendientes -->
+      <span>
+        {{ getActiveCount() }} 
+        {{ getActiveCount() === 1 ? 'tarea pendiente' : 'tareas pendientes' }}
+      </span>
+      
+      <!-- Botón para limpiar completadas -->
+      <button
+        *ngIf="todos.length > getActiveCount()"
+        (click)="clearCompleted()"
+        class="text-red-500 hover:text-red-700 hover:underline transition-colors"
+      >
+        Limpiar completadas
+      </button>
+    </div>
+    </div>
+    
+    <!-- Sección de Nosotros -->
+    <div *ngIf="currentSection === 'nosotros'" class="py-4">
+      <h1 class="text-3xl font-bold text-gray-800 text-center mb-6">
+        👥 {{ nosotrosInfo.titulo }}
+      </h1>
+      
+      <div class="bg-blue-50 p-6 rounded-xl">
+        <p class="text-gray-700 leading-relaxed text-center">
+          {{ nosotrosInfo.descripcion }}
+        </p>
+        
+        <div class="mt-8 flex justify-center space-x-6">
+          <div class="text-center">
+            <div class="text-4xl mb-2">🚀</div>
+            <h3 class="font-medium text-gray-800">Misión</h3>
+            <p class="text-sm text-gray-600 mt-1">Simplificar la organización de tareas diarias</p>
+          </div>
+          
+          <div class="text-center">
+            <div class="text-4xl mb-2">🔮</div>
+            <h3 class="font-medium text-gray-800">Visión</h3>
+            <p class="text-sm text-gray-600 mt-1">Ser la herramienta favorita de productividad</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Sección de Contacto -->
+    <div *ngIf="currentSection === 'contacto'" class="py-4">
+      <h1 class="text-3xl font-bold text-gray-800 text-center mb-6">
+        📞 {{ contactoInfo.titulo }}
+      </h1>
+      
+      <div class="bg-blue-50 p-6 rounded-xl">
+        <div class="flex flex-col space-y-4">
+          <div class="flex items-center space-x-3">
+            <div class="text-2xl">📧</div>
+            <div>
+              <h3 class="font-medium text-gray-800">Email</h3>
+              <p class="text-blue-600">{{ contactoInfo.email }}</p>
+            </div>
+          </div>
+          
+          <div class="flex items-center space-x-3">
+            <div class="text-2xl">📱</div>
+            <div>
+              <h3 class="font-medium text-gray-800">Teléfono</h3>
+              <p class="text-blue-600">{{ contactoInfo.telefono }}</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="mt-8">
+          <h3 class="font-medium text-gray-800 mb-3">Envíanos un mensaje</h3>
+          <textarea 
+            placeholder="Escribe tu mensaje aquí..."
+            class="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:outline-none transition-colors"
+            rows="4"
+          ></textarea>
+          <button class="mt-3 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all font-medium w-full">
+            Enviar mensaje
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
